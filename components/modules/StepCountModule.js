@@ -4,13 +4,37 @@ import {useEffect, useState} from "react";
 import {StyleSheet, Text, View} from "react-native";
 import moduleStyles from "../styles/moduleStyles";
 import {Button, Icon, Overlay} from "@rneui/base";
-import {getData, storeData} from "../../storage";
+import {getData, storeData, updateData} from "../../storage";
+import {getCurrentDate} from "../../utils/dateUtils";
 
 export default function StepCountModule() {
     const [overlayVisible, setOverlayVisible] = React.useState(false);
     const [dailySteps, setDailySteps] = useState(0);
     const [dailyStepGoal, setDailyStepGoal] = useState(10000);
     const [dailyStepGoalTemp, setDailyStepGoalTemp] = useState(10000);
+
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const getLocalData = async () => {
+        getData(`${getCurrentDate()}`)
+            .then((res) => {
+                if (res) {
+                    const d = JSON.parse(res);
+                    setDailySteps(parseInt(d.steps));
+                } else {
+                    updateData(getCurrentDate(), JSON.stringify({
+                        steps: 0,
+                    }));
+                }
+                setIsDataLoaded(true);
+            });
+    }
+
+    useEffect(() => {
+        if (!isDataLoaded) {
+            getLocalData();
+        }
+    }, [isDataLoaded]);
 
     const getStepCount = async () => {
         const res1 = await getData('dailyStepCountGoal');
@@ -32,6 +56,14 @@ export default function StepCountModule() {
         return value / 1000 + 'k';
     };
 
+    const onValueChange = async (value) => {
+        setDailySteps(parseInt(value));
+        const res = await getData(getCurrentDate());
+        const data = JSON.parse(res);
+        data.steps = value.toString();
+        await updateData(getCurrentDate(), JSON.stringify(data));
+    };
+
     return <View style={moduleStyles.module}>
         <View style={moduleStyles.innerContainer}>
             <View style={moduleStyles.titleContainer}>
@@ -47,11 +79,11 @@ export default function StepCountModule() {
 
             <CustomSlider
                 color="#3BCB52"
+                defaultValue={dailySteps}
                 max={dailyStepGoal}
                 goalLabel="steps"
-                onValueChange={(value) => setDailySteps(value)}
+                onValueChange={onValueChange}
             />
-
             <Text style={styles.goalLabel}>{dailySteps} / {formatThousand(dailyStepGoal)} steps</Text>
         </View>
         <Overlay
@@ -80,7 +112,6 @@ export default function StepCountModule() {
                 buttonStyle={moduleStyles.overlayButton}
                 onPress={async () => {
                     toggleOverlay();
-                    // setDailyStepGoal(dailyStepGoalTemp);
                     await storeData('dailyStepCountGoal', dailyStepGoalTemp.toString());
                     getStepCount()
                 }}

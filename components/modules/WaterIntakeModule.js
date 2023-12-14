@@ -2,9 +2,10 @@ import {StyleSheet, Text, View} from "react-native";
 import CustomSlider from "../CustomSlider";
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {Button, Icon, Overlay} from "@rneui/base";
+import {Button, Icon, Overlay, Slider} from "@rneui/base";
 import moduleStyles from "../styles/moduleStyles";
-import {getData, storeData} from "../../storage";
+import {getData, storeData, updateData} from "../../storage";
+import {getCurrentDate} from "../../utils/dateUtils";
 
 export default function WaterIntakeModule({}) {
     const [dailyWaterIntake, setDailyWaterIntake] = useState(0);
@@ -12,7 +13,31 @@ export default function WaterIntakeModule({}) {
     const [dailyWaterIntakeTempGoal, setDailyWaterIntakeTempGoal] = useState(30);
     const [overlayVisible, setOverlayVisible] = React.useState(false);
 
-    const getWater = async () => {
+
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    const getLocalData = async () => {
+        getData(`${getCurrentDate()}`)
+            .then((res) => {
+                if (res) {
+                    const d = JSON.parse(res);
+                    setDailyWaterIntake(parseInt(d.waterIntake));
+                } else {
+                    updateData(getCurrentDate(), JSON.stringify({
+                        waterIntake: 0,
+                    }));
+                }
+                setIsDataLoaded(true);
+            });
+    }
+
+    useEffect(() => {
+        if (!isDataLoaded) {
+            getLocalData();
+        }
+    }, [isDataLoaded]);
+
+    const getWaterGoal = async () => {
         const res1 = await getData('dailyWaterIntakeGoal');
         if (res1) {
             setDailyWaterIntakeGoal(parseInt(res1));
@@ -21,11 +46,19 @@ export default function WaterIntakeModule({}) {
     };
 
     useEffect(async () => {
-        getWater();
+        getWaterGoal();
     }, []);
 
     const toggleOverlay = () => {
         setOverlayVisible(!overlayVisible);
+    };
+
+    const onValueChange = async (value) => {
+        setDailyWaterIntake(parseInt(value));
+        const res = await getData(getCurrentDate());
+        const data = JSON.parse(res);
+        data.waterIntake = value.toString();
+        await updateData(getCurrentDate(), JSON.stringify(data));
     };
 
     return <View style={moduleStyles.module}>
@@ -43,9 +76,10 @@ export default function WaterIntakeModule({}) {
 
             <CustomSlider
                 color="#8AE3FF"
+                defaultValue={dailyWaterIntake}
                 max={dailyWaterIntakeGoal}
                 goalLabel="oz"
-                onValueChange={value => setDailyWaterIntake(value)}
+                onValueChange={onValueChange}
             />
             <Text style={styles.goalLabel}>{dailyWaterIntake} / {dailyWaterIntakeGoal} oz</Text>
         </View>

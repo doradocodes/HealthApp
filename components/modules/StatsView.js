@@ -11,6 +11,7 @@ export default function StatsView() {
     const [currentWeight, setCurrentWeight] = useState('0');
     const [goalWeight, setGoalWeight] = useState('0');
 
+
     const getWeight = async () => {
         const resCurrentWeight = await getData('currentWeight');
         if (resCurrentWeight) {

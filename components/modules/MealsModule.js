@@ -16,7 +16,6 @@ export default function MealsModule({ data }) {
     const getMealData = async () => {
         getData(`${getCurrentDate()}`)
             .then((res) => {
-                console.log(`${getCurrentDate()}`, res);
                 if (res) {
                     setMeals(JSON.parse(res));
                 } else {

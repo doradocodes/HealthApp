@@ -21,12 +21,11 @@ export default function App() {
         return null;
     }
 
-
     return (
         <ScrollView style={styles.container}>
-            <Button onPress={() => storeData(getCurrentDate(), "{}")}>
-                Test store data
-            </Button>
+            {/*<Button onPress={() => storeData(getCurrentDate(), "{}")}>*/}
+            {/*    Test store data*/}
+            {/*</Button>*/}
 
             {/*<Button onPress={() => getData('dailyStepCountGoal')}>*/}
             {/*    Test get data*/}
@@ -51,8 +50,6 @@ export default function App() {
             <WaterIntakeModule />
             <StepCountModule />
             <MealsModule/>
-            {/*<Module name="Daily step count"/>*/}
-            {/*<Module name="Daily step count"/>*/}
             <StatusBar style="auto"/>
         </ScrollView>
     );
