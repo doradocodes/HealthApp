@@ -10,6 +10,13 @@ import {Button} from "@rneui/base";
 import {getData, storeData} from "./storage";
 import {getCurrentDate} from "./utils/dateUtils";
 import {useEffect, useState} from "react";
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import HomeScreen from "./screens/HomeScreen";
+import OverviewScreen from "./screens/OverviewScreen";
+
+const Stack = createNativeStackNavigator();
+
 
 
 export default function App() {
@@ -22,88 +29,26 @@ export default function App() {
     }
 
     return (
-        <ScrollView style={styles.container}>
-            {/*<Button onPress={() => storeData(getCurrentDate(), "{}")}>*/}
-            {/*    Test store data*/}
-            {/*</Button>*/}
-
-            {/*<Button onPress={() => getData('dailyStepCountGoal')}>*/}
-            {/*    Test get data*/}
-            {/*</Button>*/}
-
-            <View style={styles.dateWrapper}>
-                <Text style={styles.dateLabel}>{getCurrentDate()}
-                </Text>
-            </View>
-
-            <Image
-                style={styles.backgroundImage}
-                source={require('./assets/fox.png')}
-            />
-
-            <StatsView />
-
-            <View style={styles.chatContainer}>
-                <Text style={styles.chatText}>Hi Dora! Have you tracked your meals today yet?</Text>
-            </View>
-
-            <WaterIntakeModule />
-            <StepCountModule />
-            <MealsModule/>
-            <StatusBar style="auto"/>
-        </ScrollView>
+        <NavigationContainer>
+            <Stack.Navigator
+                screenOptions={{
+                    headerShown: false
+                }}
+            >
+                <Stack.Screen
+                    name="Home"
+                    component={HomeScreen}
+                    // options={{title: 'Welcome'}}
+                />
+                <Stack.Screen
+                    name="Overview"
+                    component={OverviewScreen}
+                    options={{
+                        // gestureDirection: 'vertical',
+                    }}
+                />
+            </Stack.Navigator>
+        </NavigationContainer>
     );
 }
 
-const styles = StyleSheet.create({
-    baseText: {
-        fontFamily: 'KosugiMaru_400Regular',
-        fontSize: 16,
-    },
-    backgroundImage: {
-        width: '100%',
-        height: 250,
-    },
-    container: {
-        backgroundColor: '#E6CEB5',
-        flexDirection: 'column',
-        paddingTop: 50,
-        paddingBottom: 200,
-        gap: 20,
-    },
-    dateWrapper: {
-        backgroundColor: '#FAF7F0',
-        borderRadius: 15,
-        paddingTop: 5,
-        paddingBottom: 5,
-        paddingLeft: 10,
-        paddingRight: 10,
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: 10,
-        // width: '50%',
-        marginBottom: 10,
-        marginRight: 'auto',
-        marginLeft: 'auto',
-    },
-    dateLabel: {
-        fontFamily: 'KosugiMaru_400Regular',
-        fontSize: 16,
-        textAlign: 'center',
-
-    },
-    chatContainer: {
-        backgroundColor: '#2B2B2B',
-        borderRadius: 15,
-
-        padding: 15,
-        width: '80%',
-        marginBottom: 20,
-        marginRight: 'auto',
-        marginLeft: 'auto',
-    },
-    chatText: {
-        fontFamily: 'KosugiMaru_400Regular',
-        color: '#FFFFFF',
-    },
-});
