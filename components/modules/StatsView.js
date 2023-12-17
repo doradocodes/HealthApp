@@ -23,7 +23,7 @@ export default function StatsView() {
         }
     };
 
-    useEffect(async () => {
+    useEffect( () => {
         getWeight();
     }, []);
 

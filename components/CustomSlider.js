@@ -2,6 +2,7 @@ import {Icon, Slider} from "@rneui/base";
 import {View, Text, StyleSheet} from "react-native";
 import {useEffect, useState} from "react";
 import * as React from "react";
+import * as Haptics from "expo-haptics";
 
 export default function CustomSlider({
                                          color,
@@ -39,7 +40,9 @@ export default function CustomSlider({
             thumbTintColor={color}
             thumbTouchSize={{width: 40, height: 40}}
             trackStyle={{height: trackHeight || 20, borderRadius: 20}}
-
+            onSlidingComplete={() => {
+                Haptics.selectionAsync();
+            }}
         />
     </View>;
 }

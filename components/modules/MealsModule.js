@@ -6,6 +6,8 @@ import {useEffect, useState} from "react";
 import CustomSlider from "../CustomSlider";
 import {getData, storeData, updateData} from "../../storage";
 import {getCurrentDate, getCurrentTime} from "../../utils/dateUtils";
+import * as Haptics from "expo-haptics";
+import HeartRating from "../HeartRating";
 
 let isBreakfastStored = false;
 export default function MealsModule({ data }) {
@@ -17,10 +19,12 @@ export default function MealsModule({ data }) {
         getData(`${getCurrentDate()}`)
             .then((res) => {
                 if (res) {
-                    setMeals(JSON.parse(res));
+                    const d = JSON.parse(res);
+                    console.log('>>>', d);
+                    setMeals(d);
                 } else {
-                    storeData(getCurrentDate(), "{}");
-                    setMeals({});
+                    // storeData(getCurrentDate(), "{}");
+                    // setMeals({});
                 }
                 setIsDataLoaded(true);
             });
@@ -241,14 +245,10 @@ const MealInputForm = ({ toggleOverlay, meals, setMeals, getMealData }) => {
                 toggleOverlay();
                 const currentDate = getCurrentDate();
                 const formValues = {
-                    // meal,
                     time,
                     food,
                     hearts,
                 };
-
-                const key = `${currentDate}-${meal}`;
-                const val = JSON.stringify(formValues);
 
                 const newMeal = {
                     ...meals,
@@ -259,12 +259,7 @@ const MealInputForm = ({ toggleOverlay, meals, setMeals, getMealData }) => {
 
                 getMealData();
 
-                // if (isBreakfastStored) {
-                //     await updateData(key, val);
-                // }
-                // await storeData(key, val);
-                //
-                // getMealData('breakfast');
+                Haptics.selectionAsync();
             }}
             buttonStyle={mealFormStyles.submitButton}
             containerStyle={mealFormStyles.submitButtonContainer}

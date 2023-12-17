@@ -6,8 +6,18 @@ import StepCountModule from "../components/modules/StepCountModule";
 import MealsModule from "../components/modules/MealsModule";
 import {StatusBar} from "expo-status-bar";
 import * as React from "react";
+import {useEffect} from "react";
+import * as Haptics from "expo-haptics";
 
 export default function HomeScreen({ navigation }) {
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('tabPress', (e) => {
+            Haptics.selectionAsync();
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
     return <ScrollView style={styles.container}>
         <View style={styles.dateWrapper}>
             <Pressable onPress={() => navigation.navigate('Overview')}>
@@ -15,10 +25,10 @@ export default function HomeScreen({ navigation }) {
             </Pressable>
         </View>
 
-        <Image
-            style={styles.backgroundImage}
-            source={require('./../assets/fox.png')}
-        />
+        {/*<Image*/}
+        {/*    style={styles.backgroundImage}*/}
+        {/*    source={require('./../assets/fox.png')}*/}
+        {/*/>*/}
 
         <StatsView />
 
@@ -45,7 +55,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#E6CEB5',
         flexDirection: 'column',
-        paddingTop: 50,
+        paddingTop: 100,
         paddingBottom: 200,
         gap: 20,
     },

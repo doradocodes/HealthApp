@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import {getCurrentDate} from "../utils/dateUtils";
 import * as Haptics from "expo-haptics";
 
-export default function OverviewScreen({ navigation }) {
+export default function SettingsScreen({ navigation }) {
     const [data, setData] = useState([]);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
@@ -36,7 +36,7 @@ export default function OverviewScreen({ navigation }) {
     }, [navigation]);
 
     return <ScrollView style={globalStyles.container}>
-        <Text>OverviewScreen</Text>
+        <Text>Settings</Text>
     </ScrollView>;
 }
 

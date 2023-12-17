@@ -20,7 +20,14 @@ export default function StepCountModule() {
             .then((res) => {
                 if (res) {
                     const d = JSON.parse(res);
-                    setDailySteps(parseInt(d.steps));
+                    if (d.steps) {
+                        setDailySteps(parseInt(d.steps));
+                    } else {
+                        updateData(getCurrentDate(), JSON.stringify({
+                            steps: 0,
+                        }));
+                    }
+
                 } else {
                     updateData(getCurrentDate(), JSON.stringify({
                         steps: 0,
@@ -38,13 +45,13 @@ export default function StepCountModule() {
 
     const getStepCount = async () => {
         const res1 = await getData('dailyStepCountGoal');
-        if (res1) {
+        if (res1 && parseInt(res1)) {
             setDailyStepGoal(parseInt(res1));
             setDailyStepGoalTemp(parseInt(res1));
         }
     };
 
-    useEffect(async () => {
+    useEffect(() => {
         getStepCount();
     }, []);
 

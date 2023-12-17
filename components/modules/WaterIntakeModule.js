@@ -21,7 +21,13 @@ export default function WaterIntakeModule({}) {
             .then((res) => {
                 if (res) {
                     const d = JSON.parse(res);
-                    setDailyWaterIntake(parseInt(d.waterIntake));
+                    if (d.waterIntake) {
+                        setDailyWaterIntake(parseInt(d.waterIntake));
+                    } else {
+                        updateData(getCurrentDate(), JSON.stringify({
+                            waterIntake: 0,
+                        }));
+                    }
                 } else {
                     updateData(getCurrentDate(), JSON.stringify({
                         waterIntake: 0,
@@ -39,13 +45,13 @@ export default function WaterIntakeModule({}) {
 
     const getWaterGoal = async () => {
         const res1 = await getData('dailyWaterIntakeGoal');
-        if (res1) {
+        if (res1 && parseInt(res1)) {
             setDailyWaterIntakeGoal(parseInt(res1));
             setDailyWaterIntakeTempGoal(parseInt(res1));
         }
     };
 
-    useEffect(async () => {
+    useEffect( () => {
         getWaterGoal();
     }, []);
 

@@ -6,7 +6,7 @@ import MealsModule from "./components/modules/MealsModule";
 import WaterIntakeModule from "./components/modules/WaterIntakeModule";
 import StepCountModule from "./components/modules/StepCountModule";
 import StatsView from "./components/modules/StatsView";
-import {Button} from "@rneui/base";
+import {Button, Icon} from "@rneui/base";
 import {getData, storeData} from "./storage";
 import {getCurrentDate} from "./utils/dateUtils";
 import {useEffect, useState} from "react";
@@ -14,9 +14,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from "./screens/HomeScreen";
 import OverviewScreen from "./screens/OverviewScreen";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as Haptics from "expo-haptics";
+import SettingsScreen from "./screens/SettingsScreen";
+
 
 const Stack = createNativeStackNavigator();
-
+const Tab = createBottomTabNavigator();
 
 
 export default function App() {
@@ -29,26 +33,82 @@ export default function App() {
     }
 
     return (
-        <NavigationContainer>
-            <Stack.Navigator
-                screenOptions={{
-                    headerShown: false
-                }}
-            >
-                <Stack.Screen
-                    name="Home"
-                    component={HomeScreen}
-                    // options={{title: 'Welcome'}}
-                />
-                <Stack.Screen
-                    name="Overview"
-                    component={OverviewScreen}
-                    options={{
-                        // gestureDirection: 'vertical',
+        [
+            <NavigationContainer>
+                {/*<Stack.Navigator*/}
+                {/*    screenOptions={{*/}
+                {/*        headerShown: false*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    <Stack.Screen*/}
+                {/*        name="Home"*/}
+                {/*        component={HomeScreen}*/}
+                {/*        // options={{title: 'Welcome'}}*/}
+                {/*    />*/}
+                {/*    <Stack.Screen*/}
+                {/*        name="Overview"*/}
+                {/*        component={OverviewScreen}*/}
+                {/*        options={{*/}
+                {/*            // gestureDirection: 'vertical',*/}
+                {/*        }}*/}
+                {/*    />*/}
+                {/*</Stack.Navigator>*/}
+                <Tab.Navigator
+                    screenOptions={{
+                        headerShown: false,
+                        tabBarStyle: {
+                            backgroundColor: '#2B2B2B',
+                            // borderRadius: 30,
+                            // margin: 5,
+                        }
                     }}
-                />
-            </Stack.Navigator>
-        </NavigationContainer>
+
+                >
+                    <Tab.Screen
+                        name="Home"
+                        component={HomeScreen}
+                        options={{
+                            ...tabOptions,
+                            tabBarIcon: ({ color, size }) => (
+                                <Icon name={'home'} type="font-awesome" color="white" size={20} />
+                            ),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Overview"
+                        component={OverviewScreen}
+                        options={{
+                            ...tabOptions,
+                            tabBarIcon: ({ color, size }) => (
+                                <Icon name="star" type="font-awesome" color="white" size={20} />
+                            ),
+                        }}
+                    />
+                    <Tab.Screen
+                        name="Settings"
+                        component={SettingsScreen}
+                        options={{
+                            ...tabOptions,
+                            tabBarIcon: ({ color, size }) => (
+                                <Icon name="cog" type="font-awesome" color="white" size={20} />
+                            ),
+                        }}
+                    />
+                </Tab.Navigator>
+            </NavigationContainer>,
+
+        ]
     );
 }
 
+const tabOptions = {
+    tabBarLabelStyle: {
+        fontFamily: 'KosugiMaru_400Regular',
+        color: 'white',
+        fontSize: 10,
+        marginBottom: 5,
+    },
+    tabBarIconStyle: {
+        size: 15,
+    }
+}
