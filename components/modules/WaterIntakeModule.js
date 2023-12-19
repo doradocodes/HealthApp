@@ -5,7 +5,8 @@ import {useEffect, useState} from "react";
 import {Button, Icon, Overlay, Slider} from "@rneui/base";
 import moduleStyles from "../styles/moduleStyles";
 import {getData, storeData, updateData} from "../../storage";
-import {getCurrentDate} from "../../utils/dateUtils";
+import {formatDate, getCurrentDate} from "../../utils/dateUtils";
+import {COLORS} from "../styles/globalStyles";
 
 export default function WaterIntakeModule({}) {
     const [dailyWaterIntake, setDailyWaterIntake] = useState(0);
@@ -17,7 +18,7 @@ export default function WaterIntakeModule({}) {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
     const getLocalData = async () => {
-        getData(`${getCurrentDate()}`)
+        getData(`${formatDate(getCurrentDate())}`)
             .then((res) => {
                 if (res) {
                     const d = JSON.parse(res);
@@ -28,10 +29,6 @@ export default function WaterIntakeModule({}) {
                             waterIntake: 0,
                         }));
                     }
-                } else {
-                    updateData(getCurrentDate(), JSON.stringify({
-                        waterIntake: 0,
-                    }));
                 }
                 setIsDataLoaded(true);
             });
@@ -61,10 +58,9 @@ export default function WaterIntakeModule({}) {
 
     const onValueChange = async (value) => {
         setDailyWaterIntake(parseInt(value));
-        const res = await getData(getCurrentDate());
-        const data = JSON.parse(res);
-        data.waterIntake = value.toString();
-        await updateData(getCurrentDate(), JSON.stringify(data));
+        await updateData(formatDate(getCurrentDate()), JSON.stringify({
+            waterIntake: value.toString()
+        }));
     };
 
     return <View style={moduleStyles.module}>
@@ -101,7 +97,7 @@ export default function WaterIntakeModule({}) {
                     <Text style={styles.overlaySliderLabelMin}>100</Text>
                 </View>
                 <CustomSlider
-                    color={'#8AE3FF'}
+                    color={COLORS.blue}
                     step={10}
                     defaultValue={dailyWaterIntakeGoal}
                     max={100}
@@ -116,7 +112,7 @@ export default function WaterIntakeModule({}) {
                 onPress={async (value) => {
                     toggleOverlay();
                     await storeData('dailyWaterIntakeGoal', dailyWaterIntakeTempGoal.toString());
-                    getWater()
+                    getLocalData();
                 }}
                 containerStyle={moduleStyles.overlayButtonContainer}
                 titleStyle={moduleStyles.overlayButtonTitle}

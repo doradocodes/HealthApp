@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import {COLORS} from "./globalStyles";
 
 export default StyleSheet.create({
     module: {
@@ -16,9 +17,9 @@ export default StyleSheet.create({
         paddingRight: 15,
         paddingBottom: 15,
         marginBottom: 20,
-        backgroundColor: '#FAF7F0',
+        backgroundColor: COLORS.moduleBackground,
         borderRadius: 15,
-        shadowColor: '#A19B8F',
+        shadowColor: COLORS.shadow,
         shadowOffset: {
             width: 5,
             height: 5,
@@ -55,7 +56,7 @@ export default StyleSheet.create({
     },
     overlayButton: {
         borderRadius: 20,
-        backgroundColor: '#3BCB52',
+        backgroundColor: COLORS.green,
         fontFamily: 'KosugiMaru_400Regular',
     },
     overlayButtonContainer: {

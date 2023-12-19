@@ -17,6 +17,7 @@ import OverviewScreen from "./screens/OverviewScreen";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Haptics from "expo-haptics";
 import SettingsScreen from "./screens/SettingsScreen";
+import {COLORS} from "./components/styles/globalStyles";
 
 
 const Stack = createNativeStackNavigator();
@@ -57,7 +58,7 @@ export default function App() {
                     screenOptions={{
                         headerShown: false,
                         tabBarStyle: {
-                            backgroundColor: '#2B2B2B',
+                            backgroundColor: COLORS.moduleBackground,
                             // borderRadius: 30,
                             // margin: 5,
                         }
@@ -70,7 +71,7 @@ export default function App() {
                         options={{
                             ...tabOptions,
                             tabBarIcon: ({ color, size }) => (
-                                <Icon name={'home'} type="font-awesome" color="white" size={20} />
+                                <Icon name={'home'} type="font-awesome" color={COLORS.black} size={20} />
                             ),
                         }}
                     />
@@ -80,7 +81,7 @@ export default function App() {
                         options={{
                             ...tabOptions,
                             tabBarIcon: ({ color, size }) => (
-                                <Icon name="star" type="font-awesome" color="white" size={20} />
+                                <Icon name="bar-chart" type="font-awesome" color={COLORS.black} size={20} />
                             ),
                         }}
                     />
@@ -90,7 +91,7 @@ export default function App() {
                         options={{
                             ...tabOptions,
                             tabBarIcon: ({ color, size }) => (
-                                <Icon name="cog" type="font-awesome" color="white" size={20} />
+                                <Icon name="cog" type="font-awesome" color={COLORS.black} size={20} />
                             ),
                         }}
                     />
@@ -104,7 +105,7 @@ export default function App() {
 const tabOptions = {
     tabBarLabelStyle: {
         fontFamily: 'KosugiMaru_400Regular',
-        color: 'white',
+        color: COLORS.black,
         fontSize: 10,
         marginBottom: 5,
     },

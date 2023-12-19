@@ -2,6 +2,7 @@ import {View, Text, StyleSheet} from "react-native";
 import {Button, Icon, Overlay, Slider} from "@rneui/base";
 import * as React from "react";
 import CustomSlider from "./CustomSlider";
+import {COLORS} from "./styles/globalStyles";
 
 export default function Module({ name, children, overlay, onOverlayClose }) {
     const [visible, setVisible] = React.useState(false);
@@ -40,7 +41,7 @@ export default function Module({ name, children, overlay, onOverlayClose }) {
                     title="Done"
                     buttonStyle={{
                         borderRadius: 20,
-                        backgroundColor: '#3BCB52',
+                        backgroundColor: COLORS.green,
                         fontFamily: 'KosugiMaru_400Regular',
                     }}
                     onPress={(value) => {

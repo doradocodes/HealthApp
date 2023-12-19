@@ -5,26 +5,21 @@ import moduleStyles from "../styles/moduleStyles";
 import {useEffect, useState} from "react";
 import CustomSlider from "../CustomSlider";
 import {getData, storeData, updateData} from "../../storage";
-import {getCurrentDate, getCurrentTime} from "../../utils/dateUtils";
+import {formatDate, getCurrentDate, getCurrentTime} from "../../utils/dateUtils";
 import * as Haptics from "expo-haptics";
-import HeartRating from "../HeartRating";
+import {COLORS} from "../styles/globalStyles";
 
-let isBreakfastStored = false;
 export default function MealsModule({ data }) {
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [meals, setMeals] = useState(null);
 
     const getMealData = async () => {
-        getData(`${getCurrentDate()}`)
+        getData(`${formatDate(getCurrentDate())}`)
             .then((res) => {
                 if (res) {
                     const d = JSON.parse(res);
-                    console.log('>>>', d);
                     setMeals(d);
-                } else {
-                    // storeData(getCurrentDate(), "{}");
-                    // setMeals({});
                 }
                 setIsDataLoaded(true);
             });
@@ -43,7 +38,7 @@ export default function MealsModule({ data }) {
     const renderHearts = (numberOfHearts) => {
         const hearts = [];
         for (let i = 0; i < numberOfHearts; i++) {
-            hearts.push(<Icon name={'heart'} type={'font-awesome'} size={15} color={'#f50'} key={`hearts-${i}`} />);
+            hearts.push(<Icon name={'heart'} type={'font-awesome'} size={15} color={COLORS.red} key={`hearts-${i}`} />);
         }
         return hearts;
     }
@@ -243,7 +238,7 @@ const MealInputForm = ({ toggleOverlay, meals, setMeals, getMealData }) => {
             title="Done"
             onPress={async (value) => {
                 toggleOverlay();
-                const currentDate = getCurrentDate();
+                const currentDate = formatDate(getCurrentDate());
                 const formValues = {
                     time,
                     food,
@@ -320,7 +315,7 @@ const mealFormStyles = StyleSheet.create({
     },
     submitButton: {
         borderRadius: 20,
-        backgroundColor: '#3BCB52',
+        backgroundColor: COLORS.green,
         fontFamily: 'KosugiMaru_400Regular',
     },
     submitButtonContainer: {
@@ -345,7 +340,7 @@ const styles = StyleSheet.create({
     timeline: {
         borderRadius: 10,
         width: 10,
-        backgroundColor: '#A19B8F',
+        backgroundColor: '#ccc',
         minHeight: 50,
         height: '100%',
         position: 'absolute',
@@ -386,14 +381,14 @@ const styles = StyleSheet.create({
         height: 25,
         borderRadius: '50%',
         borderWidth: 4,
-        borderColor: '#A19B8F',
+        borderColor: '#ccc',
         position: 'absolute',
         left: '50%',
         marginLeft: -12.5,
     },
     food: {
         fontFamily: 'KosugiMaru_400Regular',
-        maxWidth: '40%',
+        width: '40%',
         paddingTop: 5,
         paddingBottom: 5,
         position: 'absolute',
