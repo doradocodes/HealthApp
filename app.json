@@ -2,7 +2,7 @@
   "expo": {
     "name": "HealthApp",
     "slug": "HealthApp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.doradocodes.HealthApp"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +26,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "253d8f08-1aeb-4d8f-8022-a91c2bef8ecc"
+      }
+    },
+    "plugins": [
+      "react-native-health"
+    ]
   }
 }

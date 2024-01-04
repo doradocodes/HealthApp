@@ -8,28 +8,35 @@ import {getData, storeData, updateData} from "../../storage";
 import {formatDate, getCurrentDate, getCurrentTime} from "../../utils/dateUtils";
 import * as Haptics from "expo-haptics";
 import {COLORS} from "../styles/globalStyles";
+import {getLocalData} from "../../utils/dataUtils";
 
-export default function MealsModule({ data }) {
+export default function MealsModule(props) {
+    const { date } = props;
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
-    const [meals, setMeals] = useState(null);
+    const [breakfast, setBreakfast] = useState(null);
+    const [lunch, setLunch] = useState(null);
+    const [dinner, setDinner] = useState(null);
 
-    const getMealData = async () => {
-        getData(`${formatDate(getCurrentDate())}`)
-            .then((res) => {
-                if (res) {
-                    const d = JSON.parse(res);
-                    setMeals(d);
-                }
+    const refreshData = () => {
+        getLocalData(date)
+            .then((data) => {
+                setBreakfast(data.breakfast);
+                setLunch(data.lunch);
+                setDinner(data.dinner);
                 setIsDataLoaded(true);
             });
     }
 
     useEffect(() => {
         if (!isDataLoaded) {
-            getMealData();
+            refreshData();
         }
     }, [isDataLoaded]);
+
+    useEffect(() => {
+        refreshData()
+    }, [date])
 
     const toggleOverlay = () => {
         setOverlayVisible(!overlayVisible);
@@ -62,50 +69,49 @@ export default function MealsModule({ data }) {
 
             <View style={styles.timelineWrapper}>
                 <View style={styles.timeline} />
-                { meals && meals.breakfast &&
+                { breakfast &&
                     <View style={styles.mealWrapper}>
                         <View style={styles.mealLabel}>
                             <View style={styles.mealLabelTextWrapper}>
                                 <Text style={styles.mealLabelText}>breakfast</Text>
                             </View>
                             <View style={styles.hearts}>
-                                {meals.breakfast.hearts && renderHearts(meals.breakfast.hearts)}
+                                {renderHearts(breakfast.hearts)}
                             </View>
                         </View>
 
                         <View style={styles.mealCircle}/>
-                        <Text style={styles.food}>{meals.breakfast.food}</Text>
-
+                        <Text style={styles.food}>{breakfast.food}</Text>
                     </View>
                 }
 
-                { meals && meals.lunch &&
+                { lunch &&
                     <View style={styles.mealWrapper}>
                         <View style={styles.mealLabel}>
                             <View style={styles.mealLabelTextWrapper}>
                                 <Text style={styles.mealLabelText}>lunch</Text>
                             </View>
                             <View style={styles.hearts}>
-                                {meals.lunch && renderHearts(meals.lunch.hearts)}
+                                {renderHearts(lunch.hearts)}
                             </View>
                         </View>
                         <View style={styles.mealCircle}/>
-                        { meals.lunch && <Text style={styles.food}>{meals.lunch.food}</Text>}
+                        <Text style={styles.food}>{lunch.food}</Text>
                     </View>
                 }
 
-                { meals && meals.dinner &&
+                { dinner &&
                     <View style={styles.mealWrapper}>
                         <View style={styles.mealLabel}>
                             <View style={styles.mealLabelTextWrapper}>
                                 <Text style={styles.mealLabelText}>dinner</Text>
                             </View>
                             <View style={styles.hearts}>
-                                {meals.dinner && renderHearts(meals.dinner.hearts)}
+                                {renderHearts(dinner.hearts)}
                             </View>
                         </View>
                         <View style={styles.mealCircle}/>
-                        {meals.dinner && <Text style={styles.food}>{meals.dinner.food}</Text>}
+                        <Text style={styles.food}>{dinner.food}</Text>
                     </View>
                 }
 
@@ -119,15 +125,14 @@ export default function MealsModule({ data }) {
         >
             <MealInputForm
                 toggleOverlay={() => toggleOverlay()}
-                getMealData={(meal) => getMealData(meal)}
-                meals={meals}
-                setMeals={(meals) => setMeals(meals)}
+                refreshData={refreshData}
+                {...props}
             />
         </Overlay>
 
     </View>
 }
-const MealInputForm = ({ toggleOverlay, meals, setMeals, getMealData }) => {
+const MealInputForm = ({ toggleOverlay, refreshData, date }) => {
     const [meal, setMeal] = useState('breakfast');
     const [time, setTime] = useState(getCurrentTime());
     const [food, setFood] = useState('');
@@ -176,7 +181,7 @@ const MealInputForm = ({ toggleOverlay, meals, setMeals, getMealData }) => {
         </View>
         <Text style={moduleStyles.overlaySubtitle}>What time did you have the meal?</Text>
         <View style={mealFormStyles.selectWrapper}>
-            <Text style={mealFormStyles.text}>{time}</Text>
+            {/*<Text style={mealFormStyles.text}>{time}</Text>*/}
             <Text>or</Text>
             <Button
                 buttonStyle={mealFormStyles.button}
@@ -237,8 +242,9 @@ const MealInputForm = ({ toggleOverlay, meals, setMeals, getMealData }) => {
         <Button
             title="Done"
             onPress={async (value) => {
+                Haptics.selectionAsync();
                 toggleOverlay();
-                const currentDate = formatDate(getCurrentDate());
+                const currentDate = formatDate(date);
                 const formValues = {
                     time,
                     food,
@@ -246,15 +252,12 @@ const MealInputForm = ({ toggleOverlay, meals, setMeals, getMealData }) => {
                 };
 
                 const newMeal = {
-                    ...meals,
                     [meal]: formValues,
                 };
 
                 await updateData(currentDate, JSON.stringify(newMeal));
 
-                getMealData();
-
-                Haptics.selectionAsync();
+                refreshData();
             }}
             buttonStyle={mealFormStyles.submitButton}
             containerStyle={mealFormStyles.submitButtonContainer}

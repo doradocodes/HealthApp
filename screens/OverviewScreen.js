@@ -10,9 +10,10 @@ import moduleStyles from "../components/styles/moduleStyles";
 import * as React from "react";
 import Trophies from "../components/Trophies";
 import moment from "moment";
+import {getLocalData} from "../utils/dataUtils";
 
 const getMarkedDataObj = (dateObj) => {
-    const date = moment(dateObj).format('YYYY-MM-DD');
+    const date = dateObj.format('YYYY-MM-DD');
 
     return {
         [date]: {
@@ -24,24 +25,19 @@ const getMarkedDataObj = (dateObj) => {
 }
 export default function OverviewScreen({ navigation }) {
     const [data, setData] = useState([]);
-    const [selectedDate, setSelectedDate] = useState(formatDate(getCurrentDate()));
+    const [selectedDate, setSelectedDate] = useState(getCurrentDate());
     const [markedDates, setMarkedDates] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [waterIntakeGoal, setDailyWaterIntakeGoal] = useState(0);
     const [stepsGoal, setStepsGoal] = useState(0);
 
-    const getLocalData = async (date) => {
-        getData(formatDate(date))
+    const refreshData = () => {
+        getLocalData(selectedDate)
             .then((res) => {
-                if (res) {
-                    const d = JSON.parse(res);
-                    setData(d);
-                    setIsDataLoaded(true);
-                } else {
-                    setData({});
-                }
+                setData(res);
+                setIsDataLoaded(true);
             });
-    };
+    }
 
     const getWaterGoal = async () => {
         const res1 = await getData('dailyWaterIntakeGoal');
@@ -59,10 +55,10 @@ export default function OverviewScreen({ navigation }) {
 
     useEffect(() => {
         if (!isDataLoaded) {
-            getLocalData(getCurrentDate());
+            refreshData();
             getWaterGoal();
             getStepGoal();
-            setMarkedDates(getMarkedDataObj(getCurrentDate()));
+            setMarkedDates(getMarkedDataObj(selectedDate));
         }
     }, [isDataLoaded]);
 
@@ -76,26 +72,26 @@ export default function OverviewScreen({ navigation }) {
 
     const isGoalReached = (value, goal) => {
         if (parseInt(value) >= parseInt(goal)) {
-            return <View style={styles.row}>
+            return <View style={globalStyles.flexContainer}>
                 <Text>
                     <Icon name="check" type="font-awesome" color={COLORS.green} size={20}/>
                 </Text>
                 <Text style={globalStyles.baseText}>{value} / {goal}</Text>
             </View>;
         }
-        return <View style={styles.row}>
+        return <View style={globalStyles.flexContainer}>
             <Text><Icon name="close" type="font-awesome" color={COLORS.red} size={20}/></Text>
             <Text style={globalStyles.baseText}>{value} / {goal}</Text>
         </View>;
     }
 
 
-    const updatedSelectedDate = (dateStr) => {
-        const dateObj = moment(dateStr);
-        setSelectedDate(formatDate(dateObj));
+    const updatedSelectedDate = async (timestamp) => {
+        const dateObj = moment(timestamp);
+        await setSelectedDate(dateObj);
         const newMarkedDate = getMarkedDataObj(dateObj);
-        setMarkedDates(newMarkedDate);
-        getLocalData(dateObj);
+        await setMarkedDates(newMarkedDate);
+        await refreshData();
     }
 
 
@@ -111,12 +107,14 @@ export default function OverviewScreen({ navigation }) {
                         style={{
                             backgroundColor: 'transparent',
                             borderRadius: 15,
+                            marginBottom: 10,
                         }}
                         markingType={'multi-dot'}
                         markedDates={markedDates}
                         onDayPress={(day) => {
+                            console.log('day pressed', day)
                             Haptics.selectionAsync()
-                            updatedSelectedDate(day.dateString);
+                            updatedSelectedDate(day.timestamp);
                         }}
                         theme={{
                             arrowColor: 'orange',
@@ -128,24 +126,21 @@ export default function OverviewScreen({ navigation }) {
                             todayTextColor: '#00adf5',
                         }}
                     />
+                    <View style={styles.dailyStatsContainer}>
+                        <View style={styles.row}>
+                            <Text style={styles.dailyStats}>Daily water goal reached?</Text>
+                            {isGoalReached(data.waterIntake, waterIntakeGoal)}
+                        </View>
+                        <View style={styles.row}>
+                            <Text style={styles.dailyStats}>Daily step goal reached?</Text>
+                            {isGoalReached(data.steps, stepsGoal)}
+                        </View>
 
+                        {/*<Text style={styles.dailyStats}>Average feeling after meals:</Text>*/}
+                    </View>
                 </View>
             </View>
-            <View style={styles.dateWrapper}>
-                <Text style={styles.dateLabel}>{selectedDate}</Text>
-            </View>
-            <View style={styles.dailyStatsContainer}>
-                <View style={styles.row}>
-                    <Text style={styles.dailyStats}>Daily water goal reached?</Text>
-                    {isGoalReached(data.waterIntake, waterIntakeGoal)}
-                </View>
-                <View style={styles.row}>
-                    <Text style={styles.dailyStats}>Daily step goal reached?</Text>
-                    {isGoalReached(data.steps, stepsGoal)}
-                </View>
 
-                {/*<Text style={styles.dailyStats}>Average feeling after meals:</Text>*/}
-            </View>
             <View style={{...moduleStyles.module, ...styles.trophiesModule}}>
                 <View style={moduleStyles.innerContainer}>
                     <Text style={moduleStyles.moduleName}>Trophies</Text>

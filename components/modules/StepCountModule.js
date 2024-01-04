@@ -7,26 +7,20 @@ import {Button, Icon, Overlay} from "@rneui/base";
 import {getData, storeData, updateData} from "../../storage";
 import {formatDate, getCurrentDate} from "../../utils/dateUtils";
 import {COLORS} from "../styles/globalStyles";
+import {getLocalData} from "../../utils/dataUtils";
 
-export default function StepCountModule() {
+export default function StepCountModule({ date }) {
     const [overlayVisible, setOverlayVisible] = React.useState(false);
     const [dailySteps, setDailySteps] = useState(0);
     const [dailyStepGoal, setDailyStepGoal] = useState(10000);
     const [dailyStepGoalTemp, setDailyStepGoalTemp] = useState(10000);
-
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-    const getLocalData = async () => {
-        getData(`${formatDate(getCurrentDate())}`)
-            .then((res) => {
-                if (res) {
-                    const d = JSON.parse(res);
-                    if (d.steps) {
-                        setDailySteps(parseInt(d.steps));
-                        setIsDataLoaded(true);
-                    }
-                }
-
+    const refreshData = () => {
+        getLocalData(date)
+            .then((data) => {
+                setDailySteps(data.steps);
+                setIsDataLoaded(true);
             });
     }
 
@@ -40,11 +34,14 @@ export default function StepCountModule() {
 
     useEffect(() => {
         if (!isDataLoaded) {
-            getLocalData();
+            refreshData();
             getStepGoal();
         }
     }, [isDataLoaded]);
 
+    useEffect(() => {
+        refreshData()
+    }, [date])
 
     const toggleOverlay = () => {
         setOverlayVisible(!overlayVisible);
@@ -56,7 +53,7 @@ export default function StepCountModule() {
 
     const onValueChange = async (value) => {
         setDailySteps(parseInt(value));
-        await updateData(formatDate(getCurrentDate()), JSON.stringify({
+        await updateData(formatDate(date), JSON.stringify({
             steps: value.toString(),
         }));
     };
@@ -110,7 +107,7 @@ export default function StepCountModule() {
                 onPress={async () => {
                     toggleOverlay();
                     await storeData('dailyStepCountGoal', dailyStepGoalTemp.toString());
-                    getStepCount()
+                    refreshData()
                 }}
                 containerStyle={moduleStyles.overlayButtonContainer}
                 titleStyle={moduleStyles.overlayButtonTitle}

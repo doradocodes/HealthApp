@@ -7,38 +7,33 @@ import moduleStyles from "../styles/moduleStyles";
 import {getData, storeData, updateData} from "../../storage";
 import {formatDate, getCurrentDate} from "../../utils/dateUtils";
 import {COLORS} from "../styles/globalStyles";
+import {getLocalData} from "../../utils/dataUtils";
 
-export default function WaterIntakeModule({}) {
+export default function WaterIntakeModule({ date }) {
     const [dailyWaterIntake, setDailyWaterIntake] = useState(0);
     const [dailyWaterIntakeGoal, setDailyWaterIntakeGoal] = useState(30);
     const [dailyWaterIntakeTempGoal, setDailyWaterIntakeTempGoal] = useState(30);
     const [overlayVisible, setOverlayVisible] = React.useState(false);
-
-
     const [isDataLoaded, setIsDataLoaded] = useState(false);
 
-    const getLocalData = async () => {
-        getData(`${formatDate(getCurrentDate())}`)
-            .then((res) => {
-                if (res) {
-                    const d = JSON.parse(res);
-                    if (d.waterIntake) {
-                        setDailyWaterIntake(parseInt(d.waterIntake));
-                    } else {
-                        updateData(getCurrentDate(), JSON.stringify({
-                            waterIntake: 0,
-                        }));
-                    }
-                }
+    const refreshData = () => {
+        getLocalData(date)
+            .then((data) => {
+                setDailyWaterIntake(data.waterIntake);
                 setIsDataLoaded(true);
             });
     }
 
     useEffect(() => {
         if (!isDataLoaded) {
-            getLocalData();
+            refreshData();
+            getWaterGoal();
         }
     }, [isDataLoaded]);
+
+    useEffect(() => {
+        refreshData()
+    }, [date])
 
     const getWaterGoal = async () => {
         const res1 = await getData('dailyWaterIntakeGoal');
@@ -48,17 +43,13 @@ export default function WaterIntakeModule({}) {
         }
     };
 
-    useEffect( () => {
-        getWaterGoal();
-    }, []);
-
     const toggleOverlay = () => {
         setOverlayVisible(!overlayVisible);
     };
 
     const onValueChange = async (value) => {
         setDailyWaterIntake(parseInt(value));
-        await updateData(formatDate(getCurrentDate()), JSON.stringify({
+        await updateData(formatDate(date), JSON.stringify({
             waterIntake: value.toString()
         }));
     };
@@ -112,7 +103,7 @@ export default function WaterIntakeModule({}) {
                 onPress={async (value) => {
                     toggleOverlay();
                     await storeData('dailyWaterIntakeGoal', dailyWaterIntakeTempGoal.toString());
-                    getLocalData();
+                    refreshData();
                 }}
                 containerStyle={moduleStyles.overlayButtonContainer}
                 titleStyle={moduleStyles.overlayButtonTitle}

@@ -15,11 +15,11 @@ export default StyleSheet.create({
         paddingTop: 15,
         paddingLeft: 15,
         paddingRight: 15,
-        paddingBottom: 15,
+        paddingBottom: 10,
         marginBottom: 20,
         backgroundColor: COLORS.moduleBackground,
         borderRadius: 15,
-        shadowColor: COLORS.shadow,
+        shadowColor: COLORS.grey,
         shadowOffset: {
             width: 5,
             height: 5,

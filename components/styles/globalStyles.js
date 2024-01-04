@@ -7,7 +7,8 @@ export const COLORS = {
     backgroundColor: '#E6CEB5',
     moduleBackground: '#FAF7F0',
     black: '#2B2B2B',
-    shadow: '#A19B8F',
+    grey: '#A19B8F',
+    lightGrey: '#CCCCCC',
 }
 
 export default StyleSheet.create({
@@ -67,7 +68,7 @@ export default StyleSheet.create({
         marginBottom: 10,
         marginRight: 'auto',
         marginLeft: 'auto',
-        shadowColor: COLORS.shadow,
+        shadowColor: COLORS.grey,
         shadowOffset: {
             width: 4,
             height: 4,
@@ -79,6 +80,19 @@ export default StyleSheet.create({
         fontFamily: 'KosugiMaru_400Regular',
         fontSize: 16,
         textAlign: 'center',
-
     },
+    flexContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    avatar: {
+        zIndex: 1,
+        width: 80,
+        height: 80,
+        marginLeft: -20,
+        // objectFit: 'contain',
+        // backgroundColor: 'red'
+    }
 });

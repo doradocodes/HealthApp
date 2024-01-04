@@ -5,7 +5,7 @@ import moduleStyles from "../styles/moduleStyles";
 import {Button, Overlay} from "@rneui/base";
 import {getData, storeData} from "../../storage";
 
-export default function StatsView() {
+export default function StatsView({ children }) {
     const [overlayVisible, setOverlayVisible] = useState(false);
 
     const [currentWeight, setCurrentWeight] = useState('0');
@@ -14,10 +14,12 @@ export default function StatsView() {
 
     const getWeight = async () => {
         const resCurrentWeight = await getData('currentWeight');
+        console.log('currentWeight', currentWeight)
         if (resCurrentWeight) {
             setCurrentWeight(resCurrentWeight)
         }
         const resGoalWeight = await getData('goalWeight');
+        console.log('goalWeight', goalWeight)
         if (resGoalWeight) {
             setGoalWeight(resGoalWeight);
         }
@@ -83,7 +85,7 @@ export default function StatsView() {
                 <Text style={styles.statsLabel}>current weight</Text>
             </View>
         </Pressable>
-
+        {children}
         <Pressable onPress={() => toggleOverlay()}>
             <View>
                 <Text style={styles.statsValue}>{goalWeight} lbs</Text>
@@ -100,6 +102,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginTop: 10,
         marginBottom: 10,
         padding: 10,
