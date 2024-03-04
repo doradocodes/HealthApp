@@ -5,16 +5,24 @@ import {StyleSheet, Text, View} from "react-native";
 import moduleStyles from "../styles/moduleStyles";
 import {Button, Icon, Overlay} from "@rneui/base";
 import {getData, storeData, updateData} from "../../storage";
-import {formatDate, getCurrentDate} from "../../utils/dateUtils";
+import {formatDate} from "../../utils/dateUtils";
 import {COLORS} from "../styles/globalStyles";
 import {getLocalData} from "../../utils/dataUtils";
 
-export default function StepCountModule({ date }) {
+export default function StepCountModule({ date, appleHealthData }) {
     const [overlayVisible, setOverlayVisible] = React.useState(false);
     const [dailySteps, setDailySteps] = useState(0);
     const [dailyStepGoal, setDailyStepGoal] = useState(10000);
     const [dailyStepGoalTemp, setDailyStepGoalTemp] = useState(10000);
     const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+    useEffect(() => {
+        console.log('apple health data changed', appleHealthData);
+        if (appleHealthData) {
+            setDailySteps(appleHealthData.value);
+        }
+
+    }, [appleHealthData]);
 
     const refreshData = () => {
         getLocalData(date)
@@ -79,6 +87,7 @@ export default function StepCountModule({ date }) {
                 onValueChange={onValueChange}
             />
             <Text style={styles.goalLabel}>{dailySteps} / {formatThousand(dailyStepGoal)} steps</Text>
+            {appleHealthData && <Text>Apple Health: {appleHealthData.value}</Text> }
         </View>
         <Overlay
             isVisible={overlayVisible}

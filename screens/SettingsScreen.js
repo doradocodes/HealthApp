@@ -3,21 +3,11 @@ import {Button} from "@rneui/base";
 import globalStyles, {COLORS} from "../components/styles/globalStyles";
 import {getData, storeData} from "../storage";
 import {useEffect, useState} from "react";
-import {getCurrentDate} from "../utils/dateUtils";
 import * as Haptics from "expo-haptics";
 import * as React from "react";
 import moduleStyles from "../components/styles/moduleStyles";
-import AppleHealthKit, {
-    HealthValue,
-    HealthKitPermissions,
-} from 'react-native-health'
+import {getAppleHealthPermissions} from "../utils/appleHealthUtils";
 
-const permissions = {
-    permissions: {
-        read: [AppleHealthKit.Constants.Permissions.HeartRate],
-        write: [AppleHealthKit.Constants.Permissions.Steps],
-    },
-}
 export default function SettingsScreen({ navigation }) {
     const [selectedAvatar, setSelectedAvatar] = useState(0);
     const [isMetricSystem, setIsMetricSystem] = useState(false);
@@ -226,41 +216,15 @@ export default function SettingsScreen({ navigation }) {
                             ios_backgroundColor={COLORS.grey}
                             onValueChange={() => {
                                 Haptics.selectionAsync();
-                                setIsAppleHealthEnabled(!isAppleHealthEnabled)
+                                getAppleHealthPermissions((response) => {
+                                    setIsAppleHealthEnabled(response);
+                                });
                             }}
                             value={isAppleHealthEnabled}
                         />
                     </View>
                 </View>
             </View>
-            <Button onPress={() => {
-                Haptics.selectionAsync();
-                AppleHealthKit.initHealthKit(permissions, (error) => {
-                    /* Called after we receive a response from the system */
-
-                    if (error) {
-                        console.log('[ERROR] Cannot grant permissions!')
-                    }
-
-                    /* Can now read or write to HealthKit */
-
-                    const options = {
-                        startDate: new Date(2020, 1, 1).toISOString(),
-                    }
-
-                    AppleHealthKit.getHeartRateSamples(
-                        options,
-                        (callbackError, results) => {
-                            /* Samples are now collected from HealthKit */
-                            if (results) {
-                                console.log(results)
-                            } else {
-                                console.log(callbackError)
-                            }
-                        },
-                    )
-                })
-            }}>Connect Apple Health</Button>
         </ScrollView>
         <ImageBackground source={require('./../assets/2d351f0091d46a9d6440ad3b34760350.jpg')} resizeMode="stretch" style={globalStyles.backgroundImage} />
     </View>;

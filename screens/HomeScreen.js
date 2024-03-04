@@ -15,12 +15,14 @@ import moduleStyles from "../components/styles/moduleStyles";
 import moment from "moment";
 import {getData} from "../storage";
 import {avatarImages} from "../utils/imageUtils";
+import {getAppleHealthData} from "../utils/appleHealthUtils";
 
 
 export default function HomeScreen({ navigation }) {
     const [currentDate, setCurrentDate] = React.useState(getCurrentDate());
     const [openDatePicker, setOpenDatePicker] = React.useState(false);
     const [selectedAvatar, setSelectedAvatar] = React.useState(0);
+    const [appleHealthData, setAppleHealthData] = React.useState(null);
 
     const getAvatar = async () => {
         const resAvatar = await getData('avatar');
@@ -36,15 +38,25 @@ export default function HomeScreen({ navigation }) {
     useEffect(() => {
         const unsubscribe = navigation.addListener('tabPress', (e) => {
             Haptics.selectionAsync();
+
+            getAppleHealthData(currentDate, (d) => {
+               setAppleHealthData(d);
+            });
         });
 
         return unsubscribe;
     }, [navigation]);
 
+    useEffect(() => {
+        getAppleHealthData(currentDate, (d) => {
+            console.log('apple health data', d);
+            setAppleHealthData(d);
+        });
+    }, []);
+
     const changeDate = () => {
         Haptics.selectionAsync();
     };
-
 
     return <View>
         <ScrollView style={styles.container}>
@@ -84,7 +96,7 @@ export default function HomeScreen({ navigation }) {
             </View>
 
             <WaterIntakeModule date={currentDate} />
-            <StepCountModule date={currentDate}/>
+            <StepCountModule date={currentDate} appleHealthData={appleHealthData}/>
             <MealsModule date={currentDate}/>
             {/*<StatusBar style="auto"/>*/}
         </ScrollView>

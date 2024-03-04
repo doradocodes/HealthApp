@@ -2,7 +2,7 @@
   "expo": {
     "name": "HealthApp",
     "slug": "HealthApp",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,7 +16,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.doradocodes.HealthApp"
+      "bundleIdentifier": "com.doradocodes.HealthApp",
+      "buildNumber": "5"
     },
     "android": {
       "adaptiveIcon": {
