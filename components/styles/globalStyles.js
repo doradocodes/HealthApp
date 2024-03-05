@@ -4,20 +4,21 @@ export const COLORS = {
     green: '#3BCB52',
     red: '#f50',
     blue: '#8AE3FF',
-    backgroundColor: '#E6CEB5',
-    moduleBackground: '#FAF7F0',
+    backgroundColor: '#F2F2F7',
+    navColor: 'white',
+    moduleBackground: 'white',
     black: '#2B2B2B',
     grey: '#A19B8F',
-    lightGrey: '#CCCCCC',
+    lightGrey: '#D9D9D9',
+    white: '#FFFFFF',
 }
+
 
 export default StyleSheet.create({
     baseText: {
-        fontFamily: 'KosugiMaru_400Regular',
-        fontSize: 16,
+        fontSize: 18,
     },
     header: {
-        fontFamily: 'KosugiMaru_400Regular',
         textAlign: 'center',
         fontSize: 20,
         marginTop: 20,
@@ -94,5 +95,13 @@ export default StyleSheet.create({
         marginLeft: -20,
         // objectFit: 'contain',
         // backgroundColor: 'red'
-    }
+    },
+    button: (isFullWidth = false) => ({
+        backgroundColor: COLORS.black,
+        borderRadius: 10,
+        width: isFullWidth ? '100%' : 200,
+    }),
+    buttonTitle: { fontSize: 18, fontFamily: 'Nunito_600SemiBold' },
+    buttonIcon: { marginRight: 5 },
+
 });

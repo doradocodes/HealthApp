@@ -18,6 +18,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Haptics from "expo-haptics";
 import SettingsScreen from "./screens/SettingsScreen";
 import {COLORS} from "./components/styles/globalStyles";
+import {Nunito_800ExtraBold, Nunito_600SemiBold} from "@expo-google-fonts/nunito";
+import HabitsScreen from "./screens/HabitsScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -26,7 +28,8 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
     let [fontsLoaded] = useFonts({
-        KosugiMaru_400Regular,
+        Nunito_800ExtraBold,
+        Nunito_600SemiBold
     });
 
     if (!fontsLoaded) {
@@ -58,9 +61,8 @@ export default function App() {
                     screenOptions={{
                         headerShown: false,
                         tabBarStyle: {
-                            backgroundColor: COLORS.moduleBackground,
-                            // borderRadius: 30,
-                            // margin: 5,
+                            backgroundColor: COLORS.navColor,
+                            paddingTop: 10,
                         }
                     }}
 
@@ -71,17 +73,17 @@ export default function App() {
                         options={{
                             ...tabOptions,
                             tabBarIcon: ({ color, size }) => (
-                                <Icon name={'home'} type="font-awesome" color={COLORS.black} size={20} />
+                                <Icon name={'home'} color={COLORS.black} size={25} />
                             ),
                         }}
                     />
                     <Tab.Screen
-                        name="Overview"
-                        component={OverviewScreen}
+                        name="Habits"
+                        component={HabitsScreen}
                         options={{
                             ...tabOptions,
                             tabBarIcon: ({ color, size }) => (
-                                <Icon name="bar-chart" type="font-awesome" color={COLORS.black} size={20} />
+                                <Icon name="layers" color={COLORS.black} size={25} />
                             ),
                         }}
                     />
@@ -91,7 +93,7 @@ export default function App() {
                         options={{
                             ...tabOptions,
                             tabBarIcon: ({ color, size }) => (
-                                <Icon name="cog" type="font-awesome" color={COLORS.black} size={20} />
+                                <Icon name="settings" color={COLORS.black} size={25} />
                             ),
                         }}
                     />
@@ -104,10 +106,10 @@ export default function App() {
 
 const tabOptions = {
     tabBarLabelStyle: {
-        fontFamily: 'KosugiMaru_400Regular',
         color: COLORS.black,
         fontSize: 10,
         marginBottom: 5,
+
     },
     tabBarIconStyle: {
         size: 15,
